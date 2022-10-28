@@ -18,6 +18,7 @@ package org.apache.ibatis.parsing;
 import java.util.Properties;
 
 /**
+ * 动态属性解析器
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -46,21 +47,53 @@ public class PropertyParser {
   private static final String ENABLE_DEFAULT_VALUE = "false";
   private static final String DEFAULT_VALUE_SEPARATOR = ":";
 
+
+  // ... 省略部分无关的
+
+
   private PropertyParser() {
+    //构造方法，修饰符为 private ，禁止构造 PropertyParser 对象，因为它是一个静态方法的工具类。
     // Prevent Instantiation
   }
 
+  /**
+   * 基于 variables 变量，替换 string 字符串中的动态属性，并返回结果
+   * @param string
+   * @param variables
+   * @return
+   */
   public static String parse(String string, Properties variables) {
+    //创建 VariableTokenHandler 对象
     VariableTokenHandler handler = new VariableTokenHandler(variables);
+    //创建 GenericTokenParser 对象
+    //我们可以看到，openToken = { ，closeToken = } ，这就是上面看到的 ${username} 和 {password}
+    //同时，handler 类型为 VariableTokenHandler ，也就是说，通过它实现自定义的处理逻辑。详见 VariableTokenHandler。
     GenericTokenParser parser = new GenericTokenParser("${", "}", handler);
+    //调用 GenericTokenParser#parse(String text) 方法，执行解析
     return parser.parse(string);
   }
 
   private static class VariableTokenHandler implements TokenHandler {
+
+    /**
+     * 变量 Properties 对象
+     */
     private final Properties variables;
+
+    /**
+     * 是否开启默认值功能。默认为 {@link #ENABLE_DEFAULT_VALUE}
+     */
     private final boolean enableDefaultValue;
+
+    /**
+     * 默认值的分隔符。默认为 {@link #KEY_DEFAULT_VALUE_SEPARATOR} ，即 ":" 。
+     */
     private final String defaultValueSeparator;
 
+    /**
+     * 内部静态类
+     * @param variables
+     */
     private VariableTokenHandler(Properties variables) {
       this.variables = variables;
       this.enableDefaultValue = Boolean.parseBoolean(getPropertyValue(KEY_ENABLE_DEFAULT_VALUE, ENABLE_DEFAULT_VALUE));
