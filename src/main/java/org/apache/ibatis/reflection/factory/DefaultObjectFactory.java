@@ -34,7 +34,7 @@ import org.apache.ibatis.reflection.ReflectionException;
 import org.apache.ibatis.reflection.Reflector;
 
 /**
- * @author Clinton Begin
+ * 实现 ObjectFactory、Serializable 接口，默认 ObjectFactory 实现类。
  */
 public class DefaultObjectFactory implements ObjectFactory, Serializable {
 
@@ -45,6 +45,9 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
     return create(type, null, null);
   }
 
+  /**
+   * 创建指定类的对象
+   */
   @SuppressWarnings("unchecked")
   @Override
   public <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
